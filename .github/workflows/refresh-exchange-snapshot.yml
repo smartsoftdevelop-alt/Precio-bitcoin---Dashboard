@@ -3,7 +3,7 @@ name: Refresh exchange snapshot
 on:
   workflow_dispatch:
   push:
-    branches: [main, audit-fixes-v3-2]
+    branches: [main, audit-fixes-v3-2, hotfix-snapshot-commit]
     paths:
       - 'scripts/refresh-exchange-snapshot.mjs'
       - '.github/workflows/refresh-exchange-snapshot.yml'
@@ -27,7 +27,7 @@ jobs:
         run: node scripts/refresh-exchange-snapshot.mjs
       - name: Commit snapshot when changed
         run: |
-          if git diff --quiet -- data/exchange-snapshot.json; then
+          if [ -z "$(git status --porcelain -- data/exchange-snapshot.json)" ]; then
             echo "No exchange snapshot changes"
             exit 0
           fi

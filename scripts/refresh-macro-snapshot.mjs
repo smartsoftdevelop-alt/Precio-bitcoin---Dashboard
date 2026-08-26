@@ -15,10 +15,13 @@ function parseFredCsv(text){
   const rows=[];
   for(const line of lines){
     const i=line.indexOf(',');if(i<0)continue;
-    const date=line.slice(0,i).trim();const raw=line.slice(i+1).trim();const value=Number(raw);
-    if(/^\d{4}-\d{2}-\d{2}$/.test(date)&&Number.isFinite(value))rows.push({date,value});
+    const date=line.slice(0,i).trim();
+    const raw=line.slice(i+1).trim();
+    if(!raw || raw==='.' || raw==='NA' || raw==='N/A')continue;
+    const value=Number(raw);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(date)&&Number.isFinite(value)&&value>0)rows.push({date,value});
   }
-  if(!rows.length)throw new Error('FRED sin observaciones numéricas');
+  if(!rows.length)throw new Error('FRED sin observaciones numéricas válidas');
   return {latest:rows.at(-1),history:rows.slice(-60)};
 }
 
