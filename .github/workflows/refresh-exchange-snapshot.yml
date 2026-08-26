@@ -2,6 +2,11 @@ name: Refresh exchange snapshot
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main, audit-fixes-v3-2]
+    paths:
+      - 'scripts/refresh-exchange-snapshot.mjs'
+      - '.github/workflows/refresh-exchange-snapshot.yml'
   schedule:
     - cron: '17 6 * * *'
 
@@ -13,19 +18,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Build compact CoinGecko snapshot
+      - name: Build CoinGecko metadata snapshot
         run: node scripts/refresh-exchange-snapshot.mjs
       - name: Commit snapshot when changed
         run: |
           if git diff --quiet -- data/exchange-snapshot.json; then
-            echo "No snapshot changes"
+            echo "No exchange snapshot changes"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/exchange-snapshot.json
-          git commit -m "chore: refresh exchange snapshot"
-          git push
+          git commit -m "chore: refresh exchange metadata snapshot"
+          git push origin HEAD:${GITHUB_REF_NAME}
