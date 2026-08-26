@@ -1,0 +1,49 @@
+{
+  "verified_at": "2026-08-26",
+  "expires_days": 30,
+  "peru_definition": "Listado por CoinGecko en su página de exchanges de Perú: exchanges que soportan depósitos PEN o están incorporados en Perú. No equivale a recomendación ni garantiza todos los productos.",
+  "peru_source": "https://www.coingecko.com/en/exchanges/country/peru",
+  "peru_listed_ids": ["gate", "bingx", "latoken"],
+  "fees": {
+    "kraken": {
+      "label": "Maker 0.38% / Taker 0.80% (nivel base spot)",
+      "source": "https://www.kraken.com/es/features/fee-schedule",
+      "note": "Las tarifas dependen de nivel, volumen y activos en plataforma."
+    },
+    "okex": {
+      "label": "Maker 0.08% / Taker 0.10% (usuario regular, grupo estándar global)",
+      "source": "https://www.okx.com/es-la/help/updates-to-global-fee-framework",
+      "note": "Puede variar por región, producto, tier y par."
+    },
+    "bybit_spot": {
+      "label": "Maker 0.10% / Taker 0.10% (no VIP spot)",
+      "source": "https://www.bybit.com/en-GB/help-center/article/Bybit-Fees-You-Need-to-Know",
+      "note": "Puede variar por VIP, región y promociones."
+    },
+    "bitget": {
+      "label": "Maker 0.10% / Taker 0.10% (estándar spot)",
+      "source": "https://www.bitget.com/en-CA/support/articles/12560603892733",
+      "note": "0.08% con BGB según la fuente; VIP puede reducir más."
+    },
+    "mxc": {
+      "label": "Maker 0% / Taker 0.05% (spot estándar)",
+      "source": "https://www.mexc.com/learn/article/mexc-spot-trading-fees-maker-taker-rates-calculator/1",
+      "note": "Promociones, MX y pares específicos pueden modificar la tarifa."
+    }
+  },
+  "allowed_exchange_domains": {
+    "binance": ["binance.com"],
+    "gdax": ["coinbase.com"],
+    "kraken": ["kraken.com"],
+    "okex": ["okx.com"],
+    "bitget": ["bitget.com"],
+    "gate": ["gate.com"],
+    "bitstamp": ["bitstamp.net"],
+    "bybit_spot": ["bybit.com"],
+    "mxc": ["mexc.com"],
+    "toobit": ["toobit.com"],
+    "crypto_com": ["crypto.com"],
+    "bingx": ["bingx.com"],
+    "latoken": ["latoken.com"]
+  }
+}
