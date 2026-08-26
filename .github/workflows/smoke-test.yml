@@ -2,6 +2,8 @@ name: Dashboard smoke test
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main, audit-fixes-v3-2]
     paths:
@@ -9,7 +11,7 @@ on:
       - 'app*.js'
       - 'styles*.css'
       - 'data/**'
-      - 'scripts/browser-smoke.mjs'
+      - 'scripts/**'
       - '.github/workflows/smoke-test.yml'
 
 jobs:
@@ -28,6 +30,12 @@ jobs:
           node --check scripts/refresh-exchange-snapshot.mjs
           node --check scripts/refresh-macro-snapshot.mjs
           node --check scripts/browser-smoke.mjs
+      - name: Data-source integration checks
+        run: |
+          node scripts/refresh-exchange-snapshot.mjs
+          node scripts/refresh-macro-snapshot.mjs
+          test -s data/exchange-snapshot.json
+          test -s data/macro-snapshot.json
       - name: Install Playwright
         run: |
           npm install --no-save playwright@1.55.0
