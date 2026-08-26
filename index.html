@@ -1,187 +1,150 @@
 <!doctype html>
-<html lang='es'>
+<html lang="es">
 <head>
-<meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
-<title>Crypto Dashboard v2.4 — Móvil</title>
-<style>
-:root{--bg:#0b1020;--card:#111931;--text:#e8ecff;--muted:#92a0cf;--border:#26345f;--good:#2ecc71;--bad:#ff6b6b;--accent:#7aa2ff;--chartH:260px;--chartHSmall:180px}
-[data-theme="light"]{--bg:#f6f8ff;--card:#fff;--text:#0b1020;--muted:#5a6a9b;--border:#dbe3ff;--good:#1fa860;--bad:#c73636;--accent:#3559ff;--chartH:260px;--chartHSmall:180px}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
-header{padding:10px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10}
-.title{font-weight:700;font-size:16px}.grow{flex:1}.toolbar{display:flex;gap:6px;align-items:center}
-.btn,select,input[type=number],input[type=text]{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px;font-size:14px}.btn{cursor:pointer}
-nav.tabs{display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--border);overflow:auto;position:sticky;top:48px;background:var(--bg);z-index:9}
-.tab{padding:8px 10px;border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;cursor:pointer;background:var(--card);white-space:nowrap}
-.tab.active{background:linear-gradient(180deg,rgba(122,162,255,.15),transparent),var(--card);color:var(--text);border-bottom:1px solid var(--bg)}
-.view{display:none;padding:10px}.view.active{display:block}
-.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.wide{grid-column:1/-1}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px;min-height:100px}.card h3{margin:0 0 6px 0;font-size:15px}
-.tv{width:100%;height:var(--chartH)}.muted{color:var(--muted);font-size:12px}.kpi{font-size:24px;font-weight:700}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:8px;border-bottom:1px solid var(--border);text-align:right}th:first-child,td:first-child{text-align:left}tfoot td{font-weight:700}
-.logo{width:18px;height:18px;vertical-align:middle;border-radius:4px;margin-right:6px}.flag{font-size:16px;margin-left:6px}.center{text-align:center}
-.ok{color:var(--good)}.bad{color:var(--bad)}.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-right:6px}
-@keyframes spin{to{transform:rotate(360deg)}}
-@media (max-width:768px){header{padding:8px 10px}.title{font-size:15px}nav.tabs{top:44px}.tv{height:var(--chartHSmall)}.grid{grid-template-columns:1fr}.hide-sm{display:none}.btn{padding:8px 12px}}
-.ex-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px}.ex-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ex-name{display:flex;align-items:center;gap:6px;font-weight:600}.ex-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-top:1px dashed var(--border)}.ex-row span{color:var(--muted)}
-.fab{position:fixed;right:14px;bottom:14px;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:12px 14px;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,.25)}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Crypto Dashboard v3.0: precios, derivados, on-chain, macro, portafolio y exchanges con fuentes y estados de actualización.">
+  <title>Crypto Dashboard v3.0</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body data-theme='dark'>
+<body data-theme="dark">
 <header>
-  <div class='title'>Crypto Dashboard v2.4 — Móvil</div>
-  <div class='grow'></div>
-  <div class='toolbar'>
-    <button id='themeBtn' class='btn'>Oscuro</button>
-    <select id='rangeSel' class='hide-sm'>
-      <option value='1D'>1D</option><option value='5D'>5D</option><option value='1M'>1M</option><option value='3M'>3M</option>
-      <option value='6M'>6M</option><option value='12M' selected>12M</option><option value='ALL'>ALL</option>
+  <div>
+    <div class="title">Crypto Dashboard v3.0</div>
+    <div class="subtitle">Datos con fuente · estado · última actualización</div>
+  </div>
+  <div class="grow"></div>
+  <div class="toolbar">
+    <label class="sr-only" for="rangeSel">Rango de gráficos</label>
+    <select id="rangeSel" aria-label="Rango de gráficos">
+      <option value="1D">1D</option><option value="5D">5D</option><option value="1M">1M</option>
+      <option value="3M">3M</option><option value="6M">6M</option><option value="12M" selected>12M</option><option value="ALL">ALL</option>
     </select>
+    <button id="themeBtn" class="btn" type="button">Tema: oscuro</button>
   </div>
 </header>
 
-<nav class='tabs'>
-  <div class='tab active' data-tab='precio'>Precio</div>
-  <div class='tab' data-tab='derivados'>Derivados</div>
-  <div class='tab' data-tab='onchain'>On-chain</div>
-  <div class='tab' data-tab='macro'>Macro</div>
-  <div class='tab' data-tab='portafolio'>Portafolio</div>
-  <div class='tab' data-tab='exchanges'>Exchanges</div>
+<nav class="tabs" role="tablist" aria-label="Secciones">
+  <button class="tab active" type="button" role="tab" aria-selected="true" aria-controls="precio" id="tab-precio" data-tab="precio">Precio</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="derivados" id="tab-derivados" data-tab="derivados">Derivados</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="onchain" id="tab-onchain" data-tab="onchain">On-chain</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="macro" id="tab-macro" data-tab="macro">Macro</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="portafolio" id="tab-portafolio" data-tab="portafolio">Portafolio</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="exchanges" id="tab-exchanges" data-tab="exchanges">Exchanges</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="metodologia" id="tab-metodologia" data-tab="metodologia">Metodología</button>
 </nav>
 
-<section id='precio' class='view active'>
-  <div class='grid'>
-    <div class='card'><h3>BTC/USD</h3><div id='btc' class='tv'></div></div>
-    <div class='card'><h3>ETH/USD</h3><div id='eth' class='tv'></div></div>
-    <div class='card'><h3>SOL/USD</h3><div id='sol' class='tv'></div></div>
-    <div class='card'><h3>BNB/USDT</h3><div id='bnb' class='tv'></div></div>
-    <div class='card'><h3>XRP/USD</h3><div id='xrp' class='tv'></div></div>
-    <div class='card wide'><h3>Visión de mercado</h3><div id='screener' style='width:100%;height:420px'></div></div>
+<main>
+<section id="precio" class="view active" role="tabpanel" aria-labelledby="tab-precio">
+  <div class="section-head"><div><h2>Mercado spot</h2><p>Gráficos de TradingView cargados solo al abrir esta sección.</p></div><span id="precioStatus" class="status neutral">Listo</span></div>
+  <div class="grid">
+    <article class="card"><h3>BTC/USD <small>Coinbase</small></h3><div id="btc" class="tv skeleton"></div></article>
+    <article class="card"><h3>ETH/USD <small>Coinbase</small></h3><div id="eth" class="tv skeleton"></div></article>
+    <article class="card"><h3>SOL/USD <small>Coinbase</small></h3><div id="sol" class="tv skeleton"></div></article>
+    <article class="card"><h3>BNB/USDT <small>Binance</small></h3><div id="bnb" class="tv skeleton"></div></article>
+    <article class="card"><h3>XRP/USD <small>Bitstamp</small></h3><div id="xrp" class="tv skeleton"></div></article>
+    <article class="card wide"><h3>Visión de mercado</h3><div id="screener" class="tv-large skeleton"></div></article>
   </div>
 </section>
 
-<section id='derivados' class='view'>
-  <div class='grid'>
-    <div class='card'><h3>BTCUSDT Perp</h3><div id='btcperp' class='tv'></div></div>
-    <div class='card'><h3>ETHUSDT Perp</h3><div id='ethperp' class='tv'></div></div>
-    <div class='card'><h3>SOLUSDT Perp</h3><div id='solperp' class='tv'></div></div>
-    <div class='card'><h3>BNBUSDT Perp</h3><div id='bnbperp' class='tv'></div></div>
-    <div class='card'><h3>XRPUSDT Perp</h3><div id='xrpperp' class='tv'></div></div>
+<section id="derivados" class="view" role="tabpanel" aria-labelledby="tab-derivados" hidden>
+  <div class="section-head"><div><h2>Derivados</h2><p>Funding, open interest y mark price desde la API pública de Binance Futures.</p></div><span id="derivStatus" class="status neutral">Sin cargar</span></div>
+  <div id="derivKpis" class="grid"></div>
+  <div class="grid">
+    <article class="card"><h3>BTCUSDT Perp</h3><div id="btcperp" class="tv skeleton"></div></article>
+    <article class="card"><h3>ETHUSDT Perp</h3><div id="ethperp" class="tv skeleton"></div></article>
+    <article class="card"><h3>SOLUSDT Perp</h3><div id="solperp" class="tv skeleton"></div></article>
+    <article class="card"><h3>BNBUSDT Perp</h3><div id="bnbperp" class="tv skeleton"></div></article>
+    <article class="card"><h3>XRPUSDT Perp</h3><div id="xrpperp" class="tv skeleton"></div></article>
   </div>
 </section>
 
-<section id='onchain' class='view'>
-  <div class='grid'>
-    <div class='card'><h3>BTC — Direcciones activas</h3><div class='kpi' id='btcAddr'>N/A</div><div class='muted'>Blockchain.info</div></div>
-    <div class='card'><h3>ETH — Gas (Gwei)</h3><div class='kpi' id='ethGas'>N/A</div><div class='muted'>Etherchain</div></div>
-    <div class='card'><h3>Stablecoins — Market Cap</h3><div class='row'><div>USDT:</div><div class='kpi' id='usdtCap'>-</div><div>USDC:</div><div class='kpi' id='usdcCap'>-</div></div><div class='muted'>Coingecko</div></div>
-    <div class='card'><h3>BTC — Mempool (txs)</h3><div class='kpi' id='btcMempool'>N/A</div><div class='muted'>mempool.space</div></div>
+<section id="onchain" class="view" role="tabpanel" aria-labelledby="tab-onchain" hidden>
+  <div class="section-head"><div><h2>On-chain</h2><p>Cada tarjeta distingue carga, dato actualizado y error.</p></div><button id="onchainRefresh" class="btn" type="button">Actualizar on-chain</button></div>
+  <div class="grid">
+    <article class="card metric"><h3>BTC — Direcciones activas</h3><div class="kpi" id="btcAddr">—</div><div class="meta" id="btcAddrMeta">Blockchain.com · sin cargar</div></article>
+    <article class="card metric"><h3>Stablecoins — Market cap</h3><div class="split-kpis"><div><span>USDT</span><strong id="usdtCap">—</strong></div><div><span>USDC</span><strong id="usdcCap">—</strong></div></div><div class="meta" id="stableMeta">CoinGecko · sin cargar</div></article>
+    <article class="card metric"><h3>BTC — Mempool</h3><div class="kpi" id="btcMempool">—</div><div class="meta" id="mempoolMeta">mempool.space · sin cargar</div></article>
+    <article class="card metric"><h3>Estado de fuentes</h3><div id="sourceHealth" class="source-health">Abre o actualiza esta pestaña para comprobar las APIs.</div></article>
   </div>
 </section>
 
-<section id='macro' class='view'>
-  <div class='grid'>
-    <div class='card wide'><h3>Calendario Económico</h3><div id='calendar' style='width:100%;height:420px'></div></div>
-    <div class='card'><h3>USD/PEN</h3><div id='usdpen' class='tv'></div></div>
-    <div class='card'><h3>Índices riesgo</h3><div id='vix' class='tv'></div><div id='dxy' class='tv' style='margin-top:10px'></div></div>
+<section id="macro" class="view" role="tabpanel" aria-labelledby="tab-macro" hidden>
+  <div class="section-head"><div><h2>Macro</h2><p>Mercados y tipo de cambio referencial USD/PEN.</p></div><span id="macroStatus" class="status neutral">Sin cargar</span></div>
+  <div class="grid">
+    <article class="card wide"><h3>Calendario económico</h3><div id="calendar" class="tv-large skeleton"></div></article>
+    <article class="card"><h3>USD/PEN <small>TradingView</small></h3><div id="usdpen" class="tv skeleton"></div></article>
+    <article class="card"><h3>USD/PEN referencial</h3><div class="kpi" id="penRate">—</div><div class="meta" id="penRateMeta">Frankfurter · sin cargar</div></article>
+    <article class="card"><h3>VIX</h3><div id="vix" class="tv skeleton"></div></article>
+    <article class="card"><h3>DXY</h3><div id="dxy" class="tv skeleton"></div></article>
   </div>
 </section>
 
-<section id='portafolio' class='view'>
-  <div class='card'>
-    <h3>Mis posiciones</h3>
-    <div class='row'>
-      <select id='assetSel'><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>XRP</option></select>
-      <input id='qtyInp' type='number' step='0.00000001' placeholder='Cantidad' style='flex:1'>
-      <input id='avgInp' type='number' step='0.0001' placeholder='Precio medio (USD)' style='flex:1'>
-      <button id='addBtn' class='btn'>Agregar</button>
+<section id="portafolio" class="view" role="tabpanel" aria-labelledby="tab-portafolio" hidden>
+  <div class="section-head"><div><h2>Portafolio local</h2><p>Las cantidades y precios medios se guardan únicamente en este navegador.</p></div><span id="ptfStatus" class="status neutral">Listo</span></div>
+  <article class="card">
+    <div class="form-grid">
+      <label>Activo<select id="assetSel"><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>XRP</option></select></label>
+      <label>Cantidad<input id="qtyInp" type="number" min="0" step="0.00000001" inputmode="decimal" placeholder="Ej. 0.05"></label>
+      <label>Precio medio (USD)<input id="avgInp" type="number" min="0" step="0.0001" inputmode="decimal" placeholder="Ej. 95000"></label>
+      <button id="addBtn" class="btn primary align-end" type="button">Agregar posición</button>
     </div>
-    <div class='row' style='margin-top:6px'>
-      <input id='penInp' type='number' step='0.0001' placeholder='USD→PEN (manual)' style='flex:1'>
-      <button id='penAutoBtn' class='btn'>PEN auto</button>
-      <button id='exportBtn' class='btn'>CSV</button>
-      <button id='clearBtn' class='btn'>Borrar</button>
+    <div class="form-grid secondary">
+      <label>USD → PEN<input id="penInp" type="number" min="0" step="0.0001" inputmode="decimal" placeholder="Tipo de cambio"></label>
+      <button id="penAutoBtn" class="btn align-end" type="button">Obtener PEN</button>
+      <button id="exportBtn" class="btn align-end" type="button">Exportar CSV</button>
+      <button id="clearBtn" class="btn danger align-end" type="button">Borrar todo</button>
     </div>
-    <div class='muted'>Datos locales del navegador.</div>
-    <div style='overflow:auto;margin-top:8px'>
-      <table id='ptfTable'>
-        <thead><tr><th>Activo</th><th>Cant.</th><th>Precio medio</th><th>Precio actual</th><th>Valor (USD)</th><th>Valor (PEN)</th><th>PnL (USD)</th><th>PnL %</th><th></th></tr></thead>
+    <div id="ptfMessage" class="inline-message" aria-live="polite"></div>
+    <div class="table-wrap">
+      <table id="ptfTable">
+        <thead><tr><th>Activo</th><th>Cant.</th><th>Precio medio</th><th>Precio actual</th><th>Valor USD</th><th>Valor PEN</th><th>PnL USD</th><th>PnL %</th><th>Acción</th></tr></thead>
         <tbody></tbody>
-        <tfoot><tr><td colspan='4'>Total</td><td id='totUsd'>-</td><td id='totPen'>-</td><td id='totPnlUsd'>-</td><td id='totPnlPct'>-</td><td></td></tr></tfoot>
+        <tfoot><tr><td colspan="4">Total</td><td id="totUsd">—</td><td id="totPen">—</td><td id="totPnlUsd">—</td><td id="totPnlPct">—</td><td></td></tr></tfoot>
       </table>
     </div>
-  </div>
+  </article>
 </section>
 
-<section id='exchanges' class='view'>
-  <div class='card wide'>
-    <h3>Top 20 Exchanges 2025 — Accesibles desde Perú</h3>
-    <div class='row' style='margin-bottom:8px'>
-      <label class='muted'>Moneda:</label>
-      <select id='coinSel'><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>XRP</option></select>
-      <label><input type='checkbox' id='peruOnly'> 🇵🇪 Soporte Perú</label>
-      <label class='hide-sm'><input type='checkbox' id='lowFees'> Comisiones bajas</label>
-      <div class='grow'></div>
-      <button id='refreshEx' class='btn'>Actualizar</button>
+<section id="exchanges" class="view" role="tabpanel" aria-labelledby="tab-exchanges" hidden>
+  <div class="section-head"><div><h2>Ranking de exchanges</h2><p>Ranking dinámico y Trust Score desde CoinGecko. No se inventan comisiones ni disponibilidad en Perú.</p></div><button id="refreshEx" class="btn" type="button">Actualizar exchanges</button></div>
+  <article class="card">
+    <div class="form-grid exchange-controls">
+      <label>Moneda<select id="coinSel"><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>XRP</option></select></label>
+      <label>Orden<select id="exchangeSort"><option value="rank">Ranking CoinGecko</option><option value="pairVolume">Volumen del par</option><option value="trust">Trust Score</option></select></label>
+      <div class="info-box"><strong>Perú:</strong> “Verificar” significa que el dashboard no afirma disponibilidad sin una fuente oficial vigente.</div>
     </div>
-    <div id='exStatus' class='muted'></div>
-    <div class='hide-sm' style='overflow:auto;margin-top:8px'>
-      <table id='exTable'>
-        <thead><tr><th>Puesto</th><th>Exchange</th><th>Par</th><th>Precio (USD)</th><th>Spread %</th><th>Liquidez par (USD/día)</th><th>Comisiones (%)</th><th>Seguridad</th><th>PE</th><th>Comprar</th></tr></thead>
+    <div id="exStatus" class="inline-message" aria-live="polite">Sin cargar.</div>
+    <div class="table-wrap desktop-exchanges">
+      <table id="exTable">
+        <thead><tr><th>Rank</th><th>Exchange</th><th>Trust Score</th><th>Par</th><th>Precio USD</th><th>Spread</th><th>Volumen 24h del par</th><th>Volumen total BTC</th><th>País</th><th>Perú</th><th>Tarifas</th><th>Sitio</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
-    <div id='exList' class='only-sm' style='margin-top:8px'></div>
-  </div>
+    <div id="exList" class="mobile-exchanges"></div>
+  </article>
 </section>
 
-<button id='reloadBtn' class='fab'>Actualizar</button>
-<footer class='muted' style='padding:10px 12px 80px'>Optimizado móvil: tarjetas, botones grandes, gráficos compactos. Si algo no carga, revisa ad-block o abre con HTTPS.</footer>
+<section id="metodologia" class="view" role="tabpanel" aria-labelledby="tab-metodologia" hidden>
+  <div class="section-head"><div><h2>Metodología y límites</h2><p>Qué significa cada dato y cómo interpretar errores o diferencias.</p></div></div>
+  <div class="grid">
+    <article class="card"><h3>Precios</h3><p>Los gráficos muestran mercados concretos de TradingView. El portafolio usa precios agregados de CoinGecko, por lo que pequeñas diferencias son normales.</p></article>
+    <article class="card"><h3>Exchanges</h3><p>Ranking, Trust Score y volumen provienen de CoinGecko. “Trust Score” no se renombra como “seguridad”. Si no existe valor, se muestra N/D.</p></article>
+    <article class="card"><h3>Perú y comisiones</h3><p>No se infieren. Las condiciones dependen de residencia, producto, nivel, volumen, método de pago y cambios regulatorios. Se remite al sitio oficial del exchange.</p></article>
+    <article class="card"><h3>USD/PEN</h3><p>La tasa automática es referencial y no representa necesariamente el tipo de cambio de tu banco, Binance, casa de cambio o tarjeta.</p></article>
+    <article class="card"><h3>Errores</h3><p>Una API caída, un bloqueo CORS, un rate limit o una respuesta inválida se muestran como error. Nunca se sustituyen silenciosamente por un dato estimado.</p></article>
+    <article class="card"><h3>Privacidad</h3><p>El portafolio permanece en localStorage del navegador. No almacenes aquí información que consideres secreta; localStorage no está cifrado.</p></article>
+  </div>
+</section>
+</main>
 
-<script>
-const tabs=[...document.querySelectorAll('.tab')],views=[...document.querySelectorAll('.view')];
-tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>x.classList.remove('active'));views.forEach(v=>v.classList.remove('active'));t.classList.add('active');document.getElementById(t.dataset.tab).classList.add('active');}));
-const themeBtn=document.getElementById('themeBtn');function setTheme(m){document.body.setAttribute('data-theme',m);themeBtn.textContent=(m==='dark')?'Oscuro':'Claro'}themeBtn.addEventListener('click',()=>{setTheme(document.body.getAttribute('data-theme')==='dark'?'light':'dark');renderAll()});setTheme('dark');
-const rangeSel=document.getElementById('rangeSel')||{value:'12M'};
-function renderMini(id,sym,range){const el=document.getElementById(id);if(!el)return;el.innerHTML='';const cont=document.createElement('div');cont.className='tradingview-widget-container';const inner=document.createElement('div');inner.className='tradingview-widget-container__widget';inner.style.width='100%';inner.style.height='100%';const s=document.createElement('script');s.async=true;s.src='https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';s.innerHTML=JSON.stringify({symbol:sym,locale:'es',dateRange:range,colorTheme:(document.body.getAttribute('data-theme')==='dark'?'dark':'light'),isTransparent:false,autosize:true});cont.appendChild(inner);cont.appendChild(s);el.appendChild(cont)}
-function renderScreener(){const el=document.getElementById('screener');el.innerHTML='';const cont=document.createElement('div');cont.className='tradingview-widget-container';cont.style.width='100%';cont.style.height='100%';const inner=document.createElement('div');inner.className='tradingview-widget-container__widget';inner.style.width='100%';inner.style.height='420px';const s=document.createElement('script');s.async=true;s.src='https://s3.tradingview.com/external-embedding/embed-widget-screener.js';s.innerHTML=JSON.stringify({width:'100%',height:420,defaultColumn:'overview',screener_type:'crypto_mkt',displayCurrency:'USD',colorTheme:(document.body.getAttribute('data-theme')==='dark'?'dark':'light'),locale:'es'});cont.appendChild(inner);cont.appendChild(s);el.appendChild(cont)}
-function renderCalendar(){const el=document.getElementById('calendar');el.innerHTML='';const cont=document.createElement('div');cont.className='tradingview-widget-container';const s=document.createElement('script');s.async=true;s.src='https://s3.tradingview.com/external-embedding/embed-widget-events.js';s.innerHTML=JSON.stringify({width:'100%',height:420,importanceFilter:'-1,0,1',colorTheme:(document.body.getAttribute('data-theme')==='dark'?'dark':'light'),isTransparent:false,locale:'es'});cont.appendChild(s);el.appendChild(cont)}
-function renderAll(){const r=rangeSel.value||'12M';renderMini('btc','COINBASE:BTCUSD',r);renderMini('eth','COINBASE:ETHUSD',r);renderMini('sol','COINBASE:SOLUSD',r);renderMini('bnb','BINANCE:BNBUSDT',r);renderMini('xrp','BITSTAMP:XRPUSD',r);renderScreener();renderMini('btcperp','BINANCE:BTCUSDT.P',r);renderMini('ethperp','BINANCE:ETHUSDT.P',r);renderMini('solperp','BINANCE:SOLUSDT.P',r);renderMini('bnbperp','BINANCE:BNBUSDT.P',r);renderMini('xrpperp','BINANCE:XRPUSDT.P',r);renderCalendar();renderMini('usdpen','FX:USDPEN','12M');renderMini('vix','CBOE:VIX','12M');renderMini('dxy','TVC:DXY','12M')}
-document.getElementById('reloadBtn').addEventListener('click',renderAll);window.addEventListener('load',renderAll);
-async function fetchJSON(u,{timeout=12000}={}){const c=new AbortController();const id=setTimeout(()=>c.abort(),timeout);const r=await fetch(u,{signal:c.signal});clearTimeout(id);return await r.json()}
-async function refreshOnchain(){try{const j=await fetchJSON('https://api.blockchain.info/charts/activeaddresses?timespan=7days&format=json&cors=true');const v=j.values.at(-1)?.y;document.getElementById('btcAddr').textContent=v?v.toLocaleString():'-'}catch{}try{const j=await fetchJSON('https://www.etherchain.org/api/gasPriceOracle');const g=j.standard||j.currentBaseFee;document.getElementById('ethGas').textContent=g?Math.round(g):'-'}catch{}try{const j=await fetchJSON('https://api.coingecko.com/api/v3/simple/price?ids=tether,usd-coin&vs_currencies=usd&include_market_cap=true');document.getElementById('usdtCap').textContent=j.tether?.usd_market_cap?'$'+Number(j.tether.usd_market_cap).toLocaleString():'-';document.getElementById('usdcCap').textContent=j['usd-coin']?.usd_market_cap?'$'+Number(j['usd-coin'].usd_market_cap).toLocaleString():'-'}catch{}try{const j=await fetchJSON('https://mempool.space/api/mempool');document.getElementById('btcMempool').textContent=(j.count||0).toLocaleString()}catch{}}
-refreshOnchain();setInterval(refreshOnchain,120000);
-const idMap={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',XRP:'ripple'};const tableBody=document.querySelector('#ptfTable tbody');const totUsdEl=document.getElementById('totUsd');const totPenEl=document.getElementById('totPen');const totPnlUsdEl=document.getElementById('totPnlUsd');const totPnlPctEl=document.getElementById('totPnlPct');
-function loadPtf(){return JSON.parse(localStorage.getItem('portfolio_v2_4')||'[]')}function savePtf(r){localStorage.setItem('portfolio_v2_4',JSON.stringify(r))}
-async function fetchPrices(){const ids=Object.values(idMap).join(',');const u=`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;const r=await fetch(u);return await r.json()}
-async function fetchPen(){const r=await fetch('https://api.exchangerate.host/latest?base=USD&symbols=PEN');const j=await r.json();return j.rates?.PEN||null}
-function fmt2(n){return(n===null||n===undefined||isNaN(n))?'-':n.toLocaleString(undefined,{maximumFractionDigits:6})}
-function delRow(i){const rows=loadPtf();rows.splice(i,1);savePtf(rows);renderPtf()}
-async function renderPtf(){const rows=loadPtf();const prices=await fetchPrices();const pen=parseFloat(document.getElementById('penInp').value)||null;tableBody.innerHTML='';let totUsd=0,totCost=0;rows.forEach((r,i)=>{const price=prices[idMap[r.asset]]?.usd||0;const value=r.qty*price;const cost=r.qty*r.avg;const pnl=value-cost;const pnlPct=cost?(pnl/cost*100):0;totUsd+=value;totCost+=cost;const tr=document.createElement('tr');tr.innerHTML=`<td>${r.asset}</td><td>${fmt2(r.qty)}</td><td>${fmt2(r.avg)}</td><td>${fmt2(price)}</td><td>${fmt2(value)}</td><td>${pen?fmt2(value*pen):'-'}</td><td class='${pnl>=0?'ok':'bad'}'>${fmt2(pnl)}</td><td class='${pnl>=0?'ok':'bad'}'>${fmt2(pnlPct)}%</td><td><button class='btn' data-del='${i}'>X</button></td>`;tableBody.appendChild(tr)});totUsdEl.textContent=fmt2(totUsd);const penRate=parseFloat(document.getElementById('penInp').value);totPenEl.textContent=(penRate?fmt2(totUsd*penRate):'-');const totPnl=totUsd-totCost;totPnlUsdEl.textContent=fmt2(totPnl);totPnlPctEl.textContent=(totCost?fmt2(totPnl/totCost*100)+'%':'-');tableBody.querySelectorAll('button[data-del]').forEach(b=>b.addEventListener('click',()=>delRow(parseInt(b.dataset.del))))}
-document.getElementById('addBtn').addEventListener('click',()=>{const asset=document.getElementById('assetSel').value;const qty=parseFloat(document.getElementById('qtyInp').value);const avg=parseFloat(document.getElementById('avgInp').value);if(!asset||!qty||!avg){alert('Completa Activo, Cantidad y Precio medio');return}const rows=loadPtf();rows.push({asset,qty,avg});savePtf(rows);document.getElementById('qtyInp').value='';document.getElementById('avgInp').value='';renderPtf()});
-document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('¿Borrar todas las posiciones?')){localStorage.removeItem('portfolio_v2_4');renderPtf()}});
-document.getElementById('exportBtn').addEventListener('click',()=>{const rows=loadPtf();const csv=['asset,qty,avg_usd'].concat(rows.map(r=>`${r.asset},${r.qty},${r.avg}`)).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='portafolio.csv';a.click();URL.revokeObjectURL(a.href)});
-document.getElementById('penAutoBtn').addEventListener('click',async()=>{const v=await fetchPen();if(v){document.getElementById('penInp').value=v.toFixed(3);renderPtf()}else alert('No se pudo obtener PEN automáticamente.')});
-document.getElementById('penInp').addEventListener('change',renderPtf);window.addEventListener('load',renderPtf);
-
-const topEx=[{id:'binance',name:'Binance',fees:'0.10',peru:true,url:'https://www.binance.com'},{id:'kraken',name:'Kraken',fees:'0.16–0.26',peru:true,url:'https://www.kraken.com'},{id:'coinbase-exchange',name:'Coinbase',fees:'0.50 + spread',peru:true,url:'https://www.coinbase.com'},{id:'okx',name:'OKX',fees:'0.10–0.15',peru:true,url:'https://www.okx.com'},{id:'bitstamp',name:'Bitstamp',fees:'0.30',peru:true,url:'https://www.bitstamp.net'},{id:'gemini',name:'Gemini',fees:'0.35',peru:true,url:'https://www.gemini.com'},{id:'bybit',name:'Bybit',fees:'0.10',peru:true,url:'https://www.bybit.com'},{id:'kucoin',name:'KuCoin',fees:'0.10',peru:true,url:'https://www.kucoin.com'},{id:'gate',name:'Gate.io',fees:'0.20',peru:true,url:'https://www.gate.io'},{id:'bitget',name:'Bitget',fees:'0.10',peru:true,url:'https://www.bitget.com'},{id:'mexc',name:'MEXC',fees:'0.00–0.10',peru:true,url:'https://www.mexc.com'},{id:'bitfinex',name:'Bitfinex',fees:'0.10–0.20',peru:true,url:'https://www.bitfinex.com'},{id:'poloniex',name:'Poloniex',fees:'0.15–0.20',peru:true,url:'https://poloniex.com'},{id:'upbit',name:'Upbit',fees:'0.25',peru:false,url:'https://upbit.com'},{id:'coincheck',name:'Coincheck',fees:'0.10–0.15',peru:false,url:'https://coincheck.com'},{id:'btse',name:'BTSE',fees:'0.10–0.20',peru:true,url:'https://www.btse.com'},{id:'bingx',name:'BingX',fees:'0.10',peru:true,url:'https://bingx.com'},{id:'whitebit',name:'WhiteBIT',fees:'0.10–0.20',peru:true,url:'https://whitebit.com'},{id:'xt',name:'XT.com',fees:'0.20',peru:true,url:'https://www.xt.com'},{id:'lbank',name:'LBank',fees:'0.10–0.20',peru:true,url:'https://www.lbank.com'}];
-const coinMap={BTC:'bitcoin',ETH:'ethereum',SOL:'solana',BNB:'binancecoin',XRP:'ripple'};
-const tbody=document.querySelector('#exTable tbody');const exList=document.getElementById('exList');const exStatus=document.getElementById('exStatus');
-let exCache={},coinTickers={};
-function fmt(n,d=0){return(n===null||n===undefined||isNaN(n))?'-':Number(n).toLocaleString(undefined,{maximumFractionDigits:d})}
-function secLevel(t){return t>=9?'Muy Alto':(t>=7?'Alto':(t>=5?'Medio':'Básico'))}
-function renderExchanges(){const peruOnly=document.getElementById('peruOnly').checked;const lowFees=document.getElementById('lowFees')?.checked||false;let rows=topEx.map((e,i)=>{const m=exCache[e.id]||{};const t=coinTickers[e.id]||null;return{puesto:i+1,id:e.id,name:e.name,fees:e.fees,peru:e.peru,logo:m.image||'',sec:secLevel(m.trust_score||7),pair:t?.pair||'—',lastUsd:t?.lastUsd||null,spread:t?.spreadPct??null,coinUsd:t?.volUsd||null,buy:t?.tradeUrl||e.url}});if(peruOnly)rows=rows.filter(r=>r.peru);rows.sort((a,b)=>(b.coinUsd||0)-(a.coinUsd||0));if(lowFees)rows=rows.slice().sort((a,b)=>parseFloat(String(a.fees).replace(/[^0-9.]/g,''))-parseFloat(String(b.fees).replace(/[^0-9.]/g,'')));
-  tbody.innerHTML='';rows.slice(0,20).forEach((r,idx)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${idx+1}</td><td>${r.logo?`<img src='${r.logo}' class='logo' onerror="this.style.display='none'">`:''}${r.name} ${r.peru?'<span class="flag">🇵🇪</span>':''}</td><td>${r.pair}</td><td>${r.lastUsd?('$'+fmt(r.lastUsd,2)):'—'}</td><td>${r.spread!==null?fmt(r.spread,2)+'%':'—'}</td><td>${r.coinUsd?('$'+fmt(r.coinUsd,0)):'—'}</td><td>${r.fees}</td><td>${r.sec}</td><td>${r.peru?'Sí':'—'}</td><td class='center'><a class='btn' href='${r.buy}' target='_blank' rel='noopener'>Comprar</a></td>`;tbody.appendChild(tr)});
-  exList.innerHTML='';rows.slice(0,20).forEach((r,idx)=>{const d=document.createElement('div');d.className='ex-card';d.innerHTML=`<div class='ex-head'><div class='ex-name'>${r.logo?`<img src='${r.logo}' class='logo' onerror="this.style.display='none'">`:''}${idx+1}. ${r.name} ${r.peru?'<span class="flag">🇵🇪</span>':''}</div><a class='btn' href='${r.buy}' target='_blank' rel='noopener'>Comprar</a></div><div class='ex-row'><span>Par</span><b>${r.pair}</b></div><div class='ex-row'><span>Precio</span><b>${r.lastUsd?('$'+fmt(r.lastUsd,2)):'—'}</b></div><div class='ex-row'><span>Spread</span><b>${r.spread!==null?fmt(r.spread,2)+'%':'—'}</b></div><div class='ex-row'><span>Liquidez</span><b>${r.coinUsd?('$'+fmt(r.coinUsd,0)):'—'}</b></div><div class='ex-row'><span>Comisiones</span><b>${r.fees}</b></div><div class='ex-row'><span>Seguridad</span><b>${r.sec}</b></div>`;exList.appendChild(d)})}
-async function loadExMeta(){try{exStatus.innerHTML='<span class="spinner"></span>Cargando exchanges…';const list=await fetchJSON('https://api.coingecko.com/api/v3/exchanges?per_page=100&page=1');exCache={};list.forEach(x=>exCache[x.id]=x);exStatus.textContent='Exchanges listos.'}catch(e){exStatus.textContent='No se pudo cargar metadata (CORS/rate limit).'}}
-async function loadCoinTickers(){const sym=document.getElementById('coinSel').value;const coinId=coinMap[sym];coinTickers={};exStatus.innerHTML=`<span class='spinner'></span>Buscando mercados para ${sym}…`;try{const j=await fetchJSON(`https://api.coingecko.com/api/v3/coins/${coinId}/tickers?include_exchange_logo=true&order=trust_score_desc`);if(Array.isArray(j.tickers)){j.tickers.forEach(t=>{const exId=t.market.identifier;if(!topEx.find(x=>x.id===exId))return;const quote=(t.target||'').toUpperCase();if(!['USD','USDT','USDC','FDUSD','BUSD','TUSD','DAI','EUR','PEN'].includes(quote))return;const tradeUrl=t.trade_url||t.market.url;const volUsd=t.converted_volume?.usd||0;const lastUsd=t.converted_last?.usd||null;const spread=(typeof t.bid_ask_spread_percentage==='number')?t.bid_ask_spread_percentage:null;const pair=`${t.base}/${t.target}`;const payload={volUsd,lastUsd,spreadPct:spread,pair,tradeUrl};if(!coinTickers[exId]||volUsd>coinTickers[exId].volUsd)coinTickers[exId]=payload});exStatus.textContent=`Mercados ${sym} listos (${Object.keys(coinTickers).length} exchanges).`}else{exStatus.textContent='Sin tickers recibidos.'}}catch(e){exStatus.textContent='No se pudo cargar tickers (CORS/rate limit).'}renderExchanges()}
-document.getElementById('refreshEx').addEventListener('click',async()=>{await loadExMeta();await loadCoinTickers()});
-document.getElementById('coinSel').addEventListener('change',loadCoinTickers);
-document.getElementById('peruOnly').addEventListener('change',renderExchanges);
-document.getElementById('lowFees')?.addEventListener('change',renderExchanges);
-(async()=>{await loadExMeta();await loadCoinTickers()})();
-</script>
+<button id="reloadBtn" class="fab" type="button" aria-label="Actualizar la sección visible">Actualizar sección</button>
+<footer>
+  <span>Crypto Dashboard v3.0</span>
+  <span id="globalUpdated">Sin actualización global</span>
+  <span>Información referencial; no constituye asesoría financiera.</span>
+</footer>
+<script src="app.js" defer></script>
 </body>
 </html>
