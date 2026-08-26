@@ -1,0 +1,38 @@
+name: Refresh macro snapshot
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, audit-fixes-v3-2]
+    paths:
+      - 'scripts/refresh-macro-snapshot.mjs'
+      - '.github/workflows/refresh-macro-snapshot.yml'
+  schedule:
+    - cron: '37 22 * * 1-5'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build macro snapshot
+        run: node scripts/refresh-macro-snapshot.mjs
+      - name: Commit snapshot when changed
+        run: |
+          if git diff --quiet -- data/macro-snapshot.json; then
+            echo "No macro snapshot changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/macro-snapshot.json
+          git commit -m "chore: refresh macro snapshot"
+          git push origin HEAD:${GITHUB_REF_NAME}
