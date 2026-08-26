@@ -4,14 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark light">
-  <meta name="description" content="Crypto Dashboard v3.0: precios, derivados, on-chain, macro, portafolio y exchanges con fuentes y estados de actualización.">
-  <title>Crypto Dashboard v3.0</title>
+  <meta name="description" content="Crypto Dashboard v3.1: precios, derivados, on-chain, macro, portafolio y exchanges con fuentes, verificación y estados de actualización.">
+  <title>Crypto Dashboard v3.1</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-v31.css">
 </head>
 <body data-theme="dark">
 <header>
   <div>
-    <div class="title">Crypto Dashboard v3.0</div>
+    <div class="title">Crypto Dashboard v3.1</div>
     <div class="subtitle">Datos con fuente · estado · última actualización</div>
   </div>
   <div class="grow"></div>
@@ -24,7 +25,6 @@
     <button id="themeBtn" class="btn" type="button">Tema: oscuro</button>
   </div>
 </header>
-
 <nav class="tabs" role="tablist" aria-label="Secciones">
   <button class="tab active" type="button" role="tab" aria-selected="true" aria-controls="precio" id="tab-precio" data-tab="precio">Precio</button>
   <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="derivados" id="tab-derivados" data-tab="derivados">Derivados</button>
@@ -34,7 +34,6 @@
   <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="exchanges" id="tab-exchanges" data-tab="exchanges">Exchanges</button>
   <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="metodologia" id="tab-metodologia" data-tab="metodologia">Metodología</button>
 </nav>
-
 <main>
 <section id="precio" class="view active" role="tabpanel" aria-labelledby="tab-precio">
   <div class="section-head"><div><h2>Mercado spot</h2><p>Gráficos de TradingView cargados solo al abrir esta sección.</p></div><span id="precioStatus" class="status neutral">Listo</span></div>
@@ -47,9 +46,8 @@
     <article class="card wide"><h3>Visión de mercado</h3><div id="screener" class="tv-large skeleton"></div></article>
   </div>
 </section>
-
 <section id="derivados" class="view" role="tabpanel" aria-labelledby="tab-derivados" hidden>
-  <div class="section-head"><div><h2>Derivados</h2><p>Funding, open interest y mark price desde la API pública de Binance Futures.</p></div><span id="derivStatus" class="status neutral">Sin cargar</span></div>
+  <div class="section-head"><div><h2>Derivados</h2><p>Funding, basis, open interest, mark price y long/short desde Binance Futures.</p></div><span id="derivStatus" class="status neutral">Sin cargar</span></div>
   <div id="derivKpis" class="grid"></div>
   <div class="grid">
     <article class="card"><h3>BTCUSDT Perp</h3><div id="btcperp" class="tv skeleton"></div></article>
@@ -59,7 +57,6 @@
     <article class="card"><h3>XRPUSDT Perp</h3><div id="xrpperp" class="tv skeleton"></div></article>
   </div>
 </section>
-
 <section id="onchain" class="view" role="tabpanel" aria-labelledby="tab-onchain" hidden>
   <div class="section-head"><div><h2>On-chain</h2><p>Cada tarjeta distingue carga, dato actualizado y error.</p></div><button id="onchainRefresh" class="btn" type="button">Actualizar on-chain</button></div>
   <div class="grid">
@@ -69,7 +66,6 @@
     <article class="card metric"><h3>Estado de fuentes</h3><div id="sourceHealth" class="source-health">Abre o actualiza esta pestaña para comprobar las APIs.</div></article>
   </div>
 </section>
-
 <section id="macro" class="view" role="tabpanel" aria-labelledby="tab-macro" hidden>
   <div class="section-head"><div><h2>Macro</h2><p>Mercados y tipo de cambio referencial USD/PEN.</p></div><span id="macroStatus" class="status neutral">Sin cargar</span></div>
   <div class="grid">
@@ -80,7 +76,6 @@
     <article class="card"><h3>DXY</h3><div id="dxy" class="tv skeleton"></div></article>
   </div>
 </section>
-
 <section id="portafolio" class="view" role="tabpanel" aria-labelledby="tab-portafolio" hidden>
   <div class="section-head"><div><h2>Portafolio local</h2><p>Las cantidades y precios medios se guardan únicamente en este navegador.</p></div><span id="ptfStatus" class="status neutral">Listo</span></div>
   <article class="card">
@@ -97,54 +92,38 @@
       <button id="clearBtn" class="btn danger align-end" type="button">Borrar todo</button>
     </div>
     <div id="ptfMessage" class="inline-message" aria-live="polite"></div>
-    <div class="table-wrap">
-      <table id="ptfTable">
-        <thead><tr><th>Activo</th><th>Cant.</th><th>Precio medio</th><th>Precio actual</th><th>Valor USD</th><th>Valor PEN</th><th>PnL USD</th><th>PnL %</th><th>Acción</th></tr></thead>
-        <tbody></tbody>
-        <tfoot><tr><td colspan="4">Total</td><td id="totUsd">—</td><td id="totPen">—</td><td id="totPnlUsd">—</td><td id="totPnlPct">—</td><td></td></tr></tfoot>
-      </table>
-    </div>
+    <div class="table-wrap"><table id="ptfTable"><thead><tr><th>Activo</th><th>Cant.</th><th>Precio medio</th><th>Precio actual</th><th>Valor USD</th><th>Valor PEN</th><th>PnL USD</th><th>PnL %</th><th>Acción</th></tr></thead><tbody></tbody><tfoot><tr><td colspan="4">Total</td><td id="totUsd">—</td><td id="totPen">—</td><td id="totPnlUsd">—</td><td id="totPnlPct">—</td><td></td></tr></tfoot></table></div>
   </article>
 </section>
-
 <section id="exchanges" class="view" role="tabpanel" aria-labelledby="tab-exchanges" hidden>
-  <div class="section-head"><div><h2>Ranking de exchanges</h2><p>Ranking dinámico y Trust Score desde CoinGecko. No se inventan comisiones ni disponibilidad en Perú.</p></div><button id="refreshEx" class="btn" type="button">Actualizar exchanges</button></div>
+  <div class="section-head"><div><h2>Ranking de exchanges</h2><p>Ranking y mercados dinámicos, con verificación fechada de Perú/tarifas cuando existe fuente vigente.</p></div><button id="refreshEx" class="btn" type="button">Actualizar exchanges</button></div>
   <article class="card">
     <div class="form-grid exchange-controls">
       <label>Moneda<select id="coinSel"><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>XRP</option></select></label>
       <label>Orden<select id="exchangeSort"><option value="rank">Ranking CoinGecko</option><option value="pairVolume">Volumen del par</option><option value="trust">Trust Score</option></select></label>
-      <div class="info-box"><strong>Perú:</strong> “Verificar” significa que el dashboard no afirma disponibilidad sin una fuente oficial vigente.</div>
+      <div class="info-box"><strong>Perú:</strong> “Listado CoinGecko Perú” significa que CoinGecko lo clasifica como exchange que soporta depósitos PEN o está incorporado en Perú; no garantiza todos los productos.</div>
     </div>
     <div id="exStatus" class="inline-message" aria-live="polite">Sin cargar.</div>
-    <div class="table-wrap desktop-exchanges">
-      <table id="exTable">
-        <thead><tr><th>Rank</th><th>Exchange</th><th>Trust Score</th><th>Par</th><th>Precio USD</th><th>Spread</th><th>Volumen 24h del par</th><th>Volumen total BTC</th><th>País</th><th>Perú</th><th>Tarifas</th><th>Sitio</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <div class="table-wrap desktop-exchanges"><table id="exTable"><thead><tr><th>Rank</th><th>Exchange</th><th>Trust Score</th><th>Par</th><th>Precio USD</th><th>Spread</th><th>Volumen 24h del par</th><th>Volumen total BTC</th><th>País</th><th>Perú</th><th>Tarifas</th><th>Sitio</th></tr></thead><tbody></tbody></table></div>
     <div id="exList" class="mobile-exchanges"></div>
   </article>
 </section>
-
 <section id="metodologia" class="view" role="tabpanel" aria-labelledby="tab-metodologia" hidden>
   <div class="section-head"><div><h2>Metodología y límites</h2><p>Qué significa cada dato y cómo interpretar errores o diferencias.</p></div></div>
   <div class="grid">
     <article class="card"><h3>Precios</h3><p>Los gráficos muestran mercados concretos de TradingView. El portafolio usa precios agregados de CoinGecko, por lo que pequeñas diferencias son normales.</p></article>
     <article class="card"><h3>Exchanges</h3><p>Ranking, Trust Score y volumen provienen de CoinGecko. “Trust Score” no se renombra como “seguridad”. Si no existe valor, se muestra N/D.</p></article>
-    <article class="card"><h3>Perú y comisiones</h3><p>No se infieren. Las condiciones dependen de residencia, producto, nivel, volumen, método de pago y cambios regulatorios. Se remite al sitio oficial del exchange.</p></article>
+    <article class="card"><h3>Perú y comisiones</h3><p>Perú usa la lista específica de CoinGecko para exchanges que soportan depósitos PEN o están incorporados en Perú; no significa que todos sus productos estén disponibles. Las tarifas base solo se muestran cuando existe fuente oficial verificada, con fecha y caducidad de 30 días.</p></article>
+    <article class="card"><h3>Derivados</h3><p>Funding, basis mark/index, open interest y long/short se consultan en Binance Futures. No se inventa un agregado de liquidaciones 24h cuando la arquitectura no dispone de una fuente histórica pública fiable.</p></article>
     <article class="card"><h3>USD/PEN</h3><p>La tasa automática es referencial y no representa necesariamente el tipo de cambio de tu banco, Binance, casa de cambio o tarjeta.</p></article>
-    <article class="card"><h3>Errores</h3><p>Una API caída, un bloqueo CORS, un rate limit o una respuesta inválida se muestran como error. Nunca se sustituyen silenciosamente por un dato estimado.</p></article>
+    <article class="card"><h3>Errores</h3><p>Una API caída, bloqueo CORS, rate limit o respuesta inválida se muestran como error. Nunca se sustituyen silenciosamente por un dato estimado.</p></article>
     <article class="card"><h3>Privacidad</h3><p>El portafolio permanece en localStorage del navegador. No almacenes aquí información que consideres secreta; localStorage no está cifrado.</p></article>
   </div>
 </section>
 </main>
-
 <button id="reloadBtn" class="fab" type="button" aria-label="Actualizar la sección visible">Actualizar sección</button>
-<footer>
-  <span>Crypto Dashboard v3.0</span>
-  <span id="globalUpdated">Sin actualización global</span>
-  <span>Información referencial; no constituye asesoría financiera.</span>
-</footer>
+<footer><span>Crypto Dashboard v3.1</span><span id="globalUpdated">Sin actualización global</span><span>Información referencial; no constituye asesoría financiera.</span></footer>
 <script src="app.js" defer></script>
+<script src="app-v31.js" defer></script>
 </body>
 </html>
