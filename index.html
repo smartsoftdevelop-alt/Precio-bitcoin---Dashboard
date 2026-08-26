@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark light">
-  <meta name="description" content="Crypto Dashboard v3.1: precios, derivados, on-chain, macro, portafolio y exchanges con fuentes, verificación y estados de actualización.">
-  <title>ADOLFO | CRYPTO INTELLIGENCE</title>
+  <meta name="description" content="ADOLFO | CRYPTO INTELLIGENCE v3.2: precios, derivados, on-chain, macro, portafolio y exchanges con fuentes, fechas y estados de actualización.">
+  <title>ADOLFO | CRYPTO INTELLIGENCE · v3.2</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="styles-v31.css">
+  <link rel="stylesheet" href="styles-v32.css">
 </head>
 <body data-theme="dark">
 <header>
@@ -47,7 +48,7 @@
   </div>
 </section>
 <section id="derivados" class="view" role="tabpanel" aria-labelledby="tab-derivados" hidden>
-  <div class="section-head"><div><h2>Derivados</h2><p>Funding, basis, open interest, mark price y long/short desde Binance Futures.</p></div><span id="derivStatus" class="status neutral">Sin cargar</span></div>
+  <div class="section-head"><div><h2>Derivados</h2><p>Funding, basis, open interest, mark price y ratio long/short de cuentas desde Binance Futures.</p></div><span id="derivStatus" class="status neutral">Sin cargar</span></div>
   <div id="derivKpis" class="grid"></div>
   <div class="grid">
     <article class="card"><h3>BTCUSDT Perp</h3><div id="btcperp" class="tv skeleton"></div></article>
@@ -58,7 +59,7 @@
   </div>
 </section>
 <section id="onchain" class="view" role="tabpanel" aria-labelledby="tab-onchain" hidden>
-  <div class="section-head"><div><h2>On-chain</h2><p>Cada tarjeta distingue carga, dato actualizado y error.</p></div><button id="onchainRefresh" class="btn" type="button">Actualizar on-chain</button></div>
+  <div class="section-head"><div><h2>On-chain</h2><p>Cada tarjeta distingue fecha del dato, consulta y error cuando la fuente lo permite.</p></div><button id="onchainRefresh" class="btn" type="button">Actualizar on-chain</button></div>
   <div class="grid">
     <article class="card metric"><h3>BTC — Direcciones activas</h3><div class="kpi" id="btcAddr">—</div><div class="meta" id="btcAddrMeta">Blockchain.com · sin cargar</div></article>
     <article class="card metric"><h3>Stablecoins — Market cap</h3><div class="split-kpis"><div><span>USDT</span><strong id="usdtCap">—</strong></div><div><span>USDC</span><strong id="usdcCap">—</strong></div></div><div class="meta" id="stableMeta">CoinGecko · sin cargar</div></article>
@@ -67,13 +68,12 @@
   </div>
 </section>
 <section id="macro" class="view" role="tabpanel" aria-labelledby="tab-macro" hidden>
-  <div class="section-head"><div><h2>Macro</h2><p>Mercados y tipo de cambio referencial USD/PEN.</p></div><span id="macroStatus" class="status neutral">Sin cargar</span></div>
+  <div class="section-head"><div><h2>Macro</h2><p>Calendario económico + datos macro verificables con fecha de fuente.</p></div><span id="macroStatus" class="status neutral">Sin cargar</span></div>
   <div class="grid">
-    <article class="card wide"><h3>Calendario económico</h3><div id="calendar" class="tv-large skeleton"></div></article>
-    <article class="card"><h3>USD/PEN <small>TradingView</small></h3><div id="usdpen" class="tv skeleton"></div></article>
-    <article class="card"><h3>USD/PEN referencial</h3><div class="kpi" id="penRate">—</div><div class="meta" id="penRateMeta">Frankfurter · sin cargar</div></article>
-    <article class="card"><h3>VIX</h3><div id="vix" class="tv skeleton"></div></article>
-    <article class="card"><h3>DXY</h3><div id="dxy" class="tv skeleton"></div></article>
+    <article class="card wide"><h3>Calendario económico</h3><div id="calendar" class="tv-large skeleton"></div><div class="source-note">TradingView · widget de eventos, separado de las series macro.</div></article>
+    <article class="card macro-data-card"><h3>USD/PEN referencial</h3><div class="kpi" id="penRate">—</div><div class="meta" id="penRateMeta">Frankfurter · sin cargar</div></article>
+    <article class="card macro-data-card"><h3>VIX <small>FRED VIXCLS</small></h3><div class="kpi" id="vixValue">—</div><div class="meta" id="vixValueMeta">FRED · sin cargar</div><div id="vixValueSpark" class="sparkline empty">Sin historial cargado</div></article>
+    <article class="card macro-data-card"><h3>Índice amplio del dólar <small>FRED DTWEXBGS</small></h3><div class="kpi" id="dollarValue">—</div><div class="meta" id="dollarValueMeta">FRED · sin cargar</div><div id="dollarValueSpark" class="sparkline empty">Sin historial cargado</div><div class="source-note">No se etiqueta como DXY: es el índice amplio del dólar ponderado por comercio.</div></article>
   </div>
 </section>
 <section id="portafolio" class="view" role="tabpanel" aria-labelledby="tab-portafolio" hidden>
@@ -96,7 +96,7 @@
   </article>
 </section>
 <section id="exchanges" class="view" role="tabpanel" aria-labelledby="tab-exchanges" hidden>
-  <div class="section-head"><div><h2>Ranking de exchanges</h2><p>Ranking y mercados dinámicos, con verificación fechada de Perú/tarifas cuando existe fuente vigente.</p></div><button id="refreshEx" class="btn" type="button">Actualizar exchanges</button></div>
+  <div class="section-head"><div><h2>Ranking de exchanges</h2><p>Metadata con snapshot/fallback y mercados recientes por API directa, con verificación fechada de Perú/tarifas.</p></div><button id="refreshEx" class="btn" type="button">Actualizar exchanges</button></div>
   <article class="card">
     <div class="form-grid exchange-controls">
       <label>Moneda<select id="coinSel"><option>BTC</option><option>ETH</option><option>SOL</option><option>BNB</option><option>XRP</option></select></label>
@@ -112,18 +112,19 @@
   <div class="section-head"><div><h2>Metodología y límites</h2><p>Qué significa cada dato y cómo interpretar errores o diferencias.</p></div></div>
   <div class="grid">
     <article class="card"><h3>Precios</h3><p>Los gráficos muestran mercados concretos de TradingView. El portafolio usa precios agregados de CoinGecko, por lo que pequeñas diferencias son normales.</p></article>
-    <article class="card"><h3>Exchanges</h3><p>Ranking, Trust Score y volumen provienen de CoinGecko. “Trust Score” no se renombra como “seguridad”. Si no existe valor, se muestra N/D.</p></article>
-    <article class="card"><h3>Perú y comisiones</h3><p>Perú usa la lista específica de CoinGecko para exchanges que soportan depósitos PEN o están incorporados en Perú; no significa que todos sus productos estén disponibles. Las tarifas base solo se muestran cuando existe fuente oficial verificada, con fecha y caducidad de 30 días.</p></article>
-    <article class="card"><h3>Derivados</h3><p>Funding, basis mark/index, open interest y long/short se consultan en Binance Futures. No se inventa un agregado de liquidaciones 24h cuando la arquitectura no dispone de una fuente histórica pública fiable.</p></article>
-    <article class="card"><h3>USD/PEN</h3><p>La tasa automática es referencial y no representa necesariamente el tipo de cambio de tu banco, Binance, casa de cambio o tarjeta.</p></article>
-    <article class="card"><h3>Errores</h3><p>Una API caída, bloqueo CORS, rate limit o respuesta inválida se muestran como error. Nunca se sustituyen silenciosamente por un dato estimado.</p></article>
+    <article class="card"><h3>Exchanges</h3><p>Ranking, Trust Score y volumen total provienen de CoinGecko. Precio, spread y volumen del par se consultan desde tickers recientes; no se reutiliza un snapshot diario para esos campos.</p></article>
+    <article class="card"><h3>Perú y comisiones</h3><p>Perú usa la lista específica de CoinGecko para exchanges que soportan depósitos PEN o están incorporados en Perú; no significa que todos sus productos estén disponibles. Las tarifas base solo se muestran cuando existe fuente oficial verificada, con fecha y caducidad.</p></article>
+    <article class="card"><h3>Derivados</h3><p>Funding, basis mark/index, open interest y long/short ratio de cuentas se consultan en Binance Futures. No se inventa un agregado de liquidaciones 24h cuando no hay una fuente histórica pública fiable en esta arquitectura.</p></article>
+    <article class="card"><h3>Macro</h3><p>USD/PEN usa Frankfurter. VIX usa FRED VIXCLS. La fortaleza del dólar usa FRED DTWEXBGS, que es un índice amplio ponderado por comercio y no se presenta como DXY. Se separa fecha del dato de hora de consulta/snapshot.</p></article>
+    <article class="card"><h3>Errores</h3><p>Una API caída, bloqueo CORS, rate limit o respuesta inválida se muestran como error o N/D. Nunca se sustituyen silenciosamente por un dato estimado.</p></article>
     <article class="card"><h3>Privacidad</h3><p>El portafolio permanece en localStorage del navegador. No almacenes aquí información que consideres secreta; localStorage no está cifrado.</p></article>
   </div>
 </section>
 </main>
 <button id="reloadBtn" class="fab" type="button" aria-label="Actualizar la sección visible">Actualizar sección</button>
-<footer><span>ADOLFO | CRYPTO INTELLIGENCE · v3.1</span><span id="globalUpdated">Sin actualización global</span><span>Información referencial; no constituye asesoría financiera.</span></footer>
-<script src="app.js" defer></script>
-<script src="app-v31.js?v=a94d95b" defer></script>
+<footer><span>ADOLFO | CRYPTO INTELLIGENCE · v3.2</span><span id="globalUpdated">Sin actualización global</span><span>Información referencial; no constituye asesoría financiera.</span></footer>
+<script src="app.js?v=32" defer></script>
+<script src="app-v31.js?v=32" defer></script>
+<script src="app-v32.js?v=32" defer></script>
 </body>
 </html>

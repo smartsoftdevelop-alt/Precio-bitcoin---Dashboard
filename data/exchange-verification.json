@@ -6,9 +6,9 @@
   "peru_listed_ids": ["gate", "bingx", "latoken"],
   "fees": {
     "kraken": {
-      "label": "Maker 0.38% / Taker 0.80% (nivel base spot)",
+      "label": "Maker 0.40% / Taker 0.80% (nivel base Kraken Pro spot)",
       "source": "https://www.kraken.com/es/features/fee-schedule",
-      "note": "Las tarifas dependen de nivel, volumen y activos en plataforma."
+      "note": "Tarifa base Kraken Pro spot. Otras estructuras, pares y niveles de volumen pueden tener tarifas diferentes."
     },
     "okex": {
       "label": "Maker 0.08% / Taker 0.10% (usuario regular, grupo estándar global)",
@@ -23,7 +23,7 @@
     "bitget": {
       "label": "Maker 0.10% / Taker 0.10% (estándar spot)",
       "source": "https://www.bitget.com/en-CA/support/articles/12560603892733",
-      "note": "0.08% con BGB según la fuente; VIP puede reducir más."
+      "note": "La propia fuente indica descuentos/tiers que pueden reducir la tarifa."
     },
     "mxc": {
       "label": "Maker 0% / Taker 0.05% (spot estándar)",

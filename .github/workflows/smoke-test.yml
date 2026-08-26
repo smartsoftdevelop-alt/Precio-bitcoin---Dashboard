@@ -1,0 +1,46 @@
+name: Dashboard smoke test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, audit-fixes-v3-2]
+    paths:
+      - 'index.html'
+      - 'app*.js'
+      - 'styles*.css'
+      - 'data/**'
+      - 'scripts/**'
+      - '.github/workflows/smoke-test.yml'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          node --check app.js
+          node --check app-v31.js
+          node --check app-v32.js
+          node --check scripts/refresh-exchange-snapshot.mjs
+          node --check scripts/refresh-macro-snapshot.mjs
+          node --check scripts/browser-smoke.mjs
+      - name: Data-source integration checks
+        run: |
+          node scripts/refresh-exchange-snapshot.mjs
+          node scripts/refresh-macro-snapshot.mjs
+          test -s data/exchange-snapshot.json
+          test -s data/macro-snapshot.json
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start local dashboard
+        run: python3 -m http.server 4173 >/tmp/dashboard-http.log 2>&1 &
+      - name: Browser smoke test
+        run: node scripts/browser-smoke.mjs

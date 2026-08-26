@@ -1,14 +1,14 @@
-name: Refresh exchange snapshot
+name: Refresh macro snapshot
 
 on:
   workflow_dispatch:
   push:
     branches: [main, audit-fixes-v3-2]
     paths:
-      - 'scripts/refresh-exchange-snapshot.mjs'
-      - '.github/workflows/refresh-exchange-snapshot.yml'
+      - 'scripts/refresh-macro-snapshot.mjs'
+      - '.github/workflows/refresh-macro-snapshot.yml'
   schedule:
-    - cron: '17 6 * * *'
+    - cron: '37 22 * * 1-5'
 
 permissions:
   contents: write
@@ -23,16 +23,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Build CoinGecko metadata snapshot
-        run: node scripts/refresh-exchange-snapshot.mjs
+      - name: Build macro snapshot
+        run: node scripts/refresh-macro-snapshot.mjs
       - name: Commit snapshot when changed
         run: |
-          if git diff --quiet -- data/exchange-snapshot.json; then
-            echo "No exchange snapshot changes"
+          if git diff --quiet -- data/macro-snapshot.json; then
+            echo "No macro snapshot changes"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/exchange-snapshot.json
-          git commit -m "chore: refresh exchange metadata snapshot"
+          git add data/macro-snapshot.json
+          git commit -m "chore: refresh macro snapshot"
           git push origin HEAD:${GITHUB_REF_NAME}
