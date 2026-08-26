@@ -114,9 +114,10 @@
     const errors=results.filter(x=>x.error).length;setStatus($('#derivStatus'),errors?`${results.length-errors}/${results.length} fuentes OK`:`Actualizado · ${nowText()}`,errors?'loading':'ok');markGlobal();
   };
 
-  document.querySelector('.title').textContent='Crypto Dashboard v3.1';
-  document.title='Crypto Dashboard v3.1';
-  const footer=document.querySelector('footer span');if(footer)footer.textContent='Crypto Dashboard v3.1';
+  document.querySelector('.title').textContent='ADOLFO | CRYPTO INTELLIGENCE';
+  const subtitle=document.querySelector('.subtitle');if(subtitle)subtitle.textContent='Market Intelligence Terminal · Crypto · Macro · Derivatives · On-chain';
+  document.title='ADOLFO | CRYPTO INTELLIGENCE';
+  const footer=document.querySelector('footer span');if(footer)footer.textContent='ADOLFO | CRYPTO INTELLIGENCE · v3.1';
   const methodCards=$$('#metodologia .card');
   const exchCard=methodCards.find(c=>c.querySelector('h3')?.textContent==='Perú y comisiones');
   if(exchCard){exchCard.querySelector('p').textContent='Perú usa la lista específica de CoinGecko para exchanges que soportan depósitos PEN o están incorporados en Perú; no significa que todos sus productos estén disponibles. Las tarifas base solo se muestran cuando existe fuente oficial verificada, con fecha y caducidad de 30 días.'}
