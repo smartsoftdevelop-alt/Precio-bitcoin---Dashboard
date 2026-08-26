@@ -3,7 +3,7 @@ name: Refresh macro snapshot
 on:
   workflow_dispatch:
   push:
-    branches: [main, audit-fixes-v3-2]
+    branches: [main, audit-fixes-v3-2, hotfix-snapshot-commit]
     paths:
       - 'scripts/refresh-macro-snapshot.mjs'
       - '.github/workflows/refresh-macro-snapshot.yml'
@@ -27,7 +27,7 @@ jobs:
         run: node scripts/refresh-macro-snapshot.mjs
       - name: Commit snapshot when changed
         run: |
-          if git diff --quiet -- data/macro-snapshot.json; then
+          if [ -z "$(git status --porcelain -- data/macro-snapshot.json)" ]; then
             echo "No macro snapshot changes"
             exit 0
           fi
