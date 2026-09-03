@@ -5,10 +5,11 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, audit-fixes-v3-2]
+    branches: [main, audit-fixes-v3-2, portfolio-binance-v3-3]
     paths:
       - 'index.html'
       - 'app*.js'
+      - 'portfolio-core*.js'
       - 'styles*.css'
       - 'data/**'
       - 'scripts/**'
@@ -22,14 +23,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Syntax checks
+      - name: Syntax and portfolio core checks
         run: |
           node --check app.js
           node --check app-v31.js
           node --check app-v32.js
+          node --check app-v33.js
+          node --check portfolio-core-v33.js
           node --check scripts/refresh-exchange-snapshot.mjs
           node --check scripts/refresh-macro-snapshot.mjs
           node --check scripts/browser-smoke.mjs
+          node scripts/portfolio-core-test.cjs
       - name: Data-source integration checks
         run: |
           node scripts/refresh-exchange-snapshot.mjs
