@@ -5,11 +5,11 @@
     const tbody=document.querySelector('#ptfTable tbody');
     if(!value||!tbody)return;
     const label=value.parentElement?.querySelector('span');
-    if(label)label.textContent='Activos con costo completo';
+    const wantedLabel='Activos con costo completo';
+    if(label&&label.textContent!==wantedLabel)label.textContent=wantedLabel;
     const rows=[...tbody.querySelectorAll('tr')];
-    if(!rows.length){value.textContent='—';return}
-    const complete=rows.filter(r=>(r.cells[9]?.textContent||'').includes('costo completo')).length;
-    value.textContent=`${complete}/${rows.length}`;
+    const wantedValue=rows.length?`${rows.filter(r=>(r.cells[9]?.textContent||'').includes('costo completo')).length}/${rows.length}`:'—';
+    if(value.textContent!==wantedValue)value.textContent=wantedValue;
   }
   function clarifyMethodology(){
     const card=document.querySelector('[data-v33-method] p');
