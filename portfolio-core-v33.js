@@ -27,7 +27,7 @@
   function hash32(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16).padStart(8,'0')}
   function assignIds(ops){
     const seen=new Map();
-    return ops.map(op=>{const base=baseFingerprint(op);const n=(seen.get(base)||0)+1;seen.set(base,n);return {...op,id:`${hash32(base)}-${n}`}});
+    return ops.map(op=>{const base=baseFingerprint(op);const n=(seen.get(base)||0)+1;seen.set(base,n);const clean={...op,id:`${hash32(base)}-${n}`};delete clean.txid;return clean});
   }
   function parseSpotText(raw){
     const normalized=text(raw).replace(/\s+/g,' ');
