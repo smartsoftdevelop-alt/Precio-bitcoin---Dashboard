@@ -37,4 +37,24 @@ assert.ok(partial);
 assert.ok(partial.coverage>0.49&&partial.coverage<0.51,'depósito cripto sin costo debe quedar como cobertura parcial');
 assert.equal(partial.avg,null,'no debe inventar precio medio con costo incompleto');
 
-console.log('portfolio-core v3.3 OK');
+const snapshotRows=[
+ ['ADOLFO | CRYPTO INTELLIGENCE — Portfolio Snapshot Binance'],
+ ['Snapshot'],[],
+ ['Fecha','Activo','Cantidad','Precio de costo (USD)','Costo total (USD)','Precio actual capturado (USD)','Valor capturado (USD)','PnL capturado (USD)','Observación'],
+ ['2026-09-02 23:59:59','USDC',6038.41808856,'','','1','6039.81','',''],
+ ['2026-09-02 23:59:59','BTC',0.03160597,94010.64,2971.2974675208,77084.2,2436.32,-534.98,'']
+];
+const snap=core.detectAndParseRows(snapshotRows);
+assert.equal(snap.type,'snapshot');
+assert.equal(snap.ops.length,2);
+const historical=core.parseSpotText('2026-01-01 10:00:00 BTCUSDT BUY 50000 0.1BTC 5000USDT 0BTC');
+const after=core.parseSpotText('2026-09-03 10:00:00 BTCUSDT BUY 80000 0.001BTC 80USDT 0BTC');
+const snapAgg=core.aggregate([...historical,...snap.ops,...after],[]);
+const btc=snapAgg.rows.find(r=>r.asset==='BTC');
+const usdc=snapAgg.rows.find(r=>r.asset==='USDC');
+assert.ok(Math.abs(btc.qty-0.03260597)<1e-10,'snapshot debe reemplazar historial previo y sumar movimientos posteriores');
+assert.ok(Math.abs(btc.cost-(2971.2974675208+80))<1e-8);
+assert.equal(usdc.avg,null,'snapshot sin costo visible debe conservar costo N/D');
+assert.equal(usdc.coverage,0);
+
+console.log('portfolio-core v3.3 snapshot OK');
