@@ -7,7 +7,7 @@ const page=await browser.newPage({viewport:{width:1440,height:900}});
 const pageErrors=[];
 page.on('pageerror',e=>pageErrors.push(e.message));
 await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000});
-await page.waitForSelector('#importBinanceBtn',{timeout:15000});
+await page.waitForSelector('#importBinanceBtn',{state:'attached',timeout:15000});
 
 const title=await page.title();
 if(!title.includes('ADOLFO | CRYPTO INTELLIGENCE')||!title.includes('v3.3'))throw new Error(`Título inesperado: ${title}`);
@@ -30,6 +30,7 @@ await page.click('#tab-portafolio');
 for(const id of ['importBinanceBtn','binanceFiles','backupBtn','restoreBackup','ptfOpCount','ptfCoverage']){
   if(await page.locator(`#${id}`).count()!==1)throw new Error(`Falta componente Portafolio v3.3 #${id}`);
 }
+if(!await page.locator('#importBinanceBtn').isVisible())throw new Error('Importar Binance no quedó visible al abrir Portafolio');
 await page.fill('#qtyInp','-1');
 await page.fill('#avgInp','10');
 await page.click('#addBtn');
