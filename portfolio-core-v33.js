@@ -21,7 +21,7 @@
     return null;
   }
   function baseFingerprint(op){
-    const keys=['source','kind','time','side','baseAsset','quoteAsset','asset','soldAsset','boughtAsset','qty','quoteQty','soldQty','boughtQty','feeAsset','feeQty','txid','network'];
+    const keys=['source','kind','time','side','baseAsset','quoteAsset','asset','soldAsset','boughtAsset','qty','quoteQty','soldQty','boughtQty','costUsd','feeAsset','feeQty','txid','network'];
     return keys.map(k=>`${k}=${op[k]??''}`).join('|');
   }
   function hash32(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16).padStart(8,'0')}
@@ -86,10 +86,22 @@
     }
     return assignIds(ops);
   }
+  function parseSnapshotRows(rows){
+    const hit=findHeader(rows,['Fecha','Activo','Cantidad','Precio de costo (USD)','Costo total (USD)']);if(!hit)return [];
+    const ops=[];
+    for(let i=hit.index+1;i<rows.length;i++){
+      const o=rowMap(hit.headers,rows[i]||[]),asset=text(o.Activo).toUpperCase(),qty=num(o.Cantidad),cost=num(o['Costo total (USD)']);
+      if(!asset||!Number.isFinite(qty)||qty<=0)continue;
+      const time=text(o.Fecha)||'9999-12-31 23:59:59';
+      ops.push({source:'portfolio-snapshot',kind:'snapshot',time,asset,qty,costUsd:Number.isFinite(cost)&&cost>0?cost:null});
+    }
+    return assignIds(ops);
+  }
   function detectAndParseRows(rows){
-    const parsers=[['spot',parseSpotRows],['convert',parseConvertRows],['withdrawal',parseWithdrawalRows],['deposit',parseDepositRows]];
+    const parsers=[['snapshot',parseSnapshotRows],['spot',parseSpotRows],['convert',parseConvertRows],['withdrawal',parseWithdrawalRows],['deposit',parseDepositRows]];
     for(const [type,fn] of parsers){const ops=fn(rows);if(ops.length)return {type,ops}}
     const flat=rows.flat().map(text);
+    if(flat.includes('ADOLFO | CRYPTO INTELLIGENCE — Portfolio Snapshot Binance'))return {type:'snapshot',ops:[]};
     if(flat.includes('Historial de transacciones en Spot'))return {type:'spot',ops:[]};
     if(flat.includes('Historial de órdenes de Convert'))return {type:'convert',ops:[]};
     if(flat.includes('Historial de retiros'))return {type:'withdrawal',ops:[]};
@@ -120,10 +132,13 @@
   }
   function chronological(ops){return [...(ops||[])].sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')))}
   function aggregateImported(ops){
-    const map=new Map(),warnings=[];
+    const map=new Map(),warnings=[];let activeSnapshotTime=null;
     for(const op of chronological(ops)){
       try{
-        if(op.kind==='spot'){
+        if(op.kind==='snapshot'){
+          if(activeSnapshotTime!==op.time){map.clear();activeSnapshotTime=op.time}
+          if(Number.isFinite(Number(op.costUsd))&&Number(op.costUsd)>0)addKnown(map,op.asset,op.qty,Number(op.costUsd));else addUnknown(map,op.asset,op.qty);
+        }else if(op.kind==='spot'){
           if(op.side==='BUY'){
             let net=op.qty;
             let usdCost=STABLE.has(op.quoteAsset)?op.quoteQty:null;
@@ -170,5 +185,5 @@
     return out.sort((a,b)=>a.asset.localeCompare(b.asset));
   }
   function aggregate(ops,manualLots){const imported=aggregateImported(ops),manual=aggregateManual(manualLots);return {rows:combine(imported.map,manual),warnings:imported.warnings}}
-  return {STABLE,amountToken,assignIds,parseSpotText,parseSpotRows,parseConvertRows,parseDepositRows,parseWithdrawalRows,detectAndParseRows,mergeOperations,aggregateImported,aggregateManual,aggregate};
+  return {STABLE,amountToken,assignIds,parseSpotText,parseSpotRows,parseConvertRows,parseDepositRows,parseWithdrawalRows,parseSnapshotRows,detectAndParseRows,mergeOperations,aggregateImported,aggregateManual,aggregate};
 });
