@@ -13,9 +13,14 @@
   }
   function clarifyMethodology(){
     const card=document.querySelector('[data-v33-method] p');
-    if(!card||card.dataset.auditClarified)return;
-    card.dataset.auditClarified='1';
-    card.append(document.createTextNode(' Si existen ventas, la reducción del costo usa costo promedio proporcional; no es contabilidad fiscal FIFO/LIFO.'));
+    if(card&&!card.dataset.auditClarified){
+      card.dataset.auditClarified='1';
+      card.append(document.createTextNode(' Si existen ventas, la reducción del costo usa costo promedio proporcional; no es contabilidad fiscal FIFO/LIFO. El formato Portfolio Snapshot establece un saldo base en su fecha de corte: operaciones anteriores quedan reemplazadas por el snapshot y las posteriores se aplican encima.'));
+    }
+    const importBtn=document.getElementById('importBinanceBtn');
+    const note=importBtn?.closest('.portfolio-panel')?.querySelector('.source-note');
+    const wanted='Soporta Portfolio Snapshot (XLSX), Historial Spot (PDF/XLSX), Convert, Depósitos y Retiros (XLSX). Un Snapshot fija el saldo base de la fecha indicada y evita duplicar el historial anterior.';
+    if(note&&note.textContent!==wanted)note.textContent=wanted;
   }
   function applyAuditCorrections(){correctCoverage();clarifyMethodology()}
   const target=document.getElementById('portafolio');
