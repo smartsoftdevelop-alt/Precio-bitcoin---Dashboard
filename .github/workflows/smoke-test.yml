@@ -5,11 +5,12 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, audit-fixes-v3-2, portfolio-binance-v3-3]
+    branches: [main, audit-fixes-v3-2, portfolio-binance-v3-3, fix-snapshot-currency-parser-v331]
     paths:
       - 'index.html'
       - 'app*.js'
       - 'portfolio-core*.js'
+      - 'snapshot-format*.js'
       - 'styles*.css'
       - 'data/**'
       - 'scripts/**'
@@ -29,7 +30,9 @@ jobs:
           node --check app-v31.js
           node --check app-v32.js
           node --check app-v33.js
+          node --check app-v33-audit.js
           node --check portfolio-core-v33.js
+          node --check snapshot-format-v331.js
           node --check scripts/refresh-exchange-snapshot.mjs
           node --check scripts/refresh-macro-snapshot.mjs
           node --check scripts/browser-smoke.mjs
