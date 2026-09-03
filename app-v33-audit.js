@@ -17,7 +17,8 @@
     card.dataset.auditClarified='1';
     card.append(document.createTextNode(' Si existen ventas, la reducción del costo usa costo promedio proporcional; no es contabilidad fiscal FIFO/LIFO.'));
   }
+  function applyAuditCorrections(){correctCoverage();clarifyMethodology()}
   const target=document.getElementById('portafolio');
-  if(target){new MutationObserver(correctCoverage).observe(target,{subtree:true,childList:true,characterData:true});}
-  correctCoverage();clarifyMethodology();
+  if(target){new MutationObserver(applyAuditCorrections).observe(target,{subtree:true,childList:true,characterData:true});}
+  applyAuditCorrections();
 })();
