@@ -31,18 +31,23 @@ for(const id of ['importBinanceBtn','binanceFiles','backupBtn','restoreBackup','
   if(await page.locator(`#${id}`).count()!==1)throw new Error(`Falta componente Portafolio v3.3 #${id}`);
 }
 if(!await page.locator('#importBinanceBtn').isVisible())throw new Error('Importar Binance no quedó visible al abrir Portafolio');
+await page.waitForTimeout(100);
+const coverageLabel=await page.locator('#ptfCoverage').evaluate(el=>el.parentElement?.querySelector('span')?.textContent||'');
+if(coverageLabel!=='Activos con costo completo')throw new Error(`Métrica de cobertura no corregida: ${coverageLabel}`);
 await page.fill('#qtyInp','-1');
 await page.fill('#avgInp','10');
 await page.click('#addBtn');
 const msg=await page.locator('#ptfMessage').textContent();
 if(!msg?.includes('mayores que cero'))throw new Error('La validación de portafolio no rechazó cantidad negativa');
 
-const [app,app31,app32,app33,core]=await Promise.all([
-  readFile('app.js','utf8'),readFile('app-v31.js','utf8'),readFile('app-v32.js','utf8'),readFile('app-v33.js','utf8'),readFile('portfolio-core-v33.js','utf8')
+const [app,app31,app32,app33,audit33,core]=await Promise.all([
+  readFile('app.js','utf8'),readFile('app-v31.js','utf8'),readFile('app-v32.js','utf8'),readFile('app-v33.js','utf8'),readFile('app-v33-audit.js','utf8'),readFile('portfolio-core-v33.js','utf8')
 ]);
-if(/\.innerHTML\s*=/.test(app+app31+app32+app33+core))throw new Error('Se detectó asignación innerHTML en código de aplicación');
-if(/1171169894|adolfo\.huacoto@gmail\.com|CALLE LAS GEMAS/i.test(app+app31+app32+app33+core))throw new Error('Se detectaron datos personales incrustados en el código');
+const source=app+app31+app32+app33+audit33+core;
+if(/\.innerHTML\s*=/.test(source))throw new Error('Se detectó asignación innerHTML en código de aplicación');
+if(/1171169894|adolfo\.huacoto@gmail\.com|CALLE LAS GEMAS/i.test(source))throw new Error('Se detectaron datos personales incrustados en el código');
+if(!/delete clean\.txid/.test(core))throw new Error('El núcleo no descarta TXID antes de persistir operaciones');
 if(pageErrors.length)throw new Error(`Errores JS no capturados: ${pageErrors.join(' | ')}`);
 
-console.log('Browser smoke test OK: 7 tabs, Macro v3.2 preserved, Portfolio v3.3, privacy checks, safe DOM');
+console.log('Browser smoke test OK: 7 tabs, Macro v3.2 preserved, Portfolio v3.3, audit corrections, privacy checks, safe DOM');
 await browser.close();
