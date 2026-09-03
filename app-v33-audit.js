@@ -1,5 +1,17 @@
 (() => {
   'use strict';
+
+  function ensureSnapshotFix(){
+    if(globalThis.PortfolioSnapshotFix){globalThis.PortfolioSnapshotFix.install(globalThis);return}
+    if(document.querySelector('script[data-snapshot-fix]'))return;
+    const s=document.createElement('script');
+    s.src='snapshot-format-v331.js?v=331';
+    s.async=true;
+    s.dataset.snapshotFix='1';
+    s.addEventListener('load',()=>globalThis.PortfolioSnapshotFix?.install(globalThis),{once:true});
+    document.head.append(s);
+  }
+
   function correctCoverage(){
     const value=document.getElementById('ptfCoverage');
     const tbody=document.querySelector('#ptfTable tbody');
@@ -22,7 +34,7 @@
     const wanted='Soporta Portfolio Snapshot (XLSX), Historial Spot (PDF/XLSX), Convert, Depósitos y Retiros (XLSX). Un Snapshot fija el saldo base de la fecha indicada y evita duplicar el historial anterior.';
     if(note&&note.textContent!==wanted)note.textContent=wanted;
   }
-  function applyAuditCorrections(){correctCoverage();clarifyMethodology()}
+  function applyAuditCorrections(){ensureSnapshotFix();correctCoverage();clarifyMethodology()}
   const target=document.getElementById('portafolio');
   if(target){new MutationObserver(applyAuditCorrections).observe(target,{subtree:true,childList:true,characterData:true});}
   applyAuditCorrections();
