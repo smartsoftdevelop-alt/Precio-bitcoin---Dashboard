@@ -141,4 +141,5 @@
 
   document.title='ADOLFO | CRYPTO INTELLIGENCE · v3.2';
   const footer=document.querySelector('footer span');if(footer)footer.textContent='ADOLFO | CRYPTO INTELLIGENCE · v3.2';
+  const v33=document.createElement('script');v33.src='app-v33.js?v=33';v33.defer=true;document.body.append(v33);
 })();
